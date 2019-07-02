@@ -12,7 +12,7 @@ import cv2
 pallete = [0,0,0,
         255, 255, 255]
 
-debug=True
+debug=False
 import argparse
 def parse_args():
    parser = argparse.ArgumentParser(description='test resnet model for portrait segmentation')
@@ -38,9 +38,9 @@ def start_test(model_proto,model_weight,imgtxt,testsize,enable_crop):
    count = 0
    acc = 0
    for imgname in imgs:
+      print(imgname)
       imgname,label = imgname.strip().split(' ')
       imgtype = imgname.split('.')[-1]
-      print(imgname)
       if imgtype != 'png' and imgtype != 'jpg' and imgtype != 'JPG' and imgtype != 'jpeg' and imgtype != 'tif' and imgtype != 'bmp':
           print (imgtype,"error")
           continue
@@ -55,8 +55,8 @@ def start_test(model_proto,model_weight,imgtxt,testsize,enable_crop):
 
       if enable_crop == 1:
           print ("use crop")
-          cropx = (imgwidth - testsize) / 2 
-          cropy = (imgheight - testsize) / 2
+          cropx = (imgwidth - testsize) // 2 
+          cropy = (imgheight - testsize) // 2
           img = img[cropy:cropy+testsize,cropx:cropx+testsize,0:channel]
       else:
           img = cv2.resize(img,(testsize,testsize),interpolation=cv2.INTER_NEAREST)
@@ -70,6 +70,7 @@ def start_test(model_proto,model_weight,imgtxt,testsize,enable_crop):
       result = out['classifier'][0]
       print ("result=",result)
       predict = np.argmax(result) 
+      print("predict label=", predict)
       if str(label) == str(predict):
          acc = acc + 1
       count = count + 1

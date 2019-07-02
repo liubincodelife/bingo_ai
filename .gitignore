@@ -7,3 +7,9 @@ computer_vision/projects/classification/caffe/simpleconv3_add_contrast_colorshif
 computer_vision/projects/classification/caffe/simpleconv3_fixcrop/snaps/
 computer_vision/projects/classification/caffe/simpleconv3_freecrop/snaps/
 computer_vision/projects/classification/caffe/simpleconv3_nodataaug/snaps/
+
+#flask folders
+bingoai_server/.idea/
+bingoai_server/__pycache__/
+bingoai_server/app/__pycache__/
+bingoai_server/venv/

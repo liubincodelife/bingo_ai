@@ -1,6 +1,6 @@
 #_*_ coding:utf8
 import sys
-sys.path.insert(0, '../caffe/python/')
+#sys.path.insert(0, '../caffe/python/')
 import caffe
 import os,shutil
 import numpy as np
@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import time
 import cv2
 
-debug=True
+debug=False
 import argparse
 def parse_args():
    parser = argparse.ArgumentParser(description='test resnet model for portrait segmentation')
@@ -32,16 +32,17 @@ def start_test(model_proto,model_weight,img_folder,testsize):
    neg = 0
 
    for imgname in imgs:
+      print(imgname)
       imgtype = imgname.split('.')[-1]
       imgid = imgname.split('.')[0]
       if imgtype != 'png' and imgtype != 'jpg' and imgtype != 'JPG' and imgtype != 'jpeg' and imgtype != 'tif' and imgtype != 'bmp':
-          print imgtype,"error"
+          print (imgtype,"error")
           continue
       imgpath = os.path.join(img_folder,imgname)
 
       img = cv2.imread(imgpath)
       if img is None:
-          print "---------img is empty---------",imgpath
+          print ("---------img is empty---------",imgpath)
           continue
       
       img = cv2.resize(img,(testsize,testsize))
@@ -53,12 +54,12 @@ def start_test(model_proto,model_weight,img_folder,testsize):
       out = net.forward_all(data=np.asarray([transformer.preprocess('data', img)]))
          
       result = out['prob'][0]
-      print "---------result prob---------",result,"-------result size--------",result.shape
+      print ("---------result prob---------",result,"-------result size--------",result.shape)
       probneutral = result[0]
-      print "prob neutral",probneutral 
+      print ("prob neutral",probneutral) 
      
       probsmile = result[1]
-      print "prob smile",probsmile
+      print ("prob smile",probsmile)
       problabel = -1
       probstr = 'none'
       if probneutral > probsmile:
@@ -76,8 +77,8 @@ def start_test(model_proto,model_weight,img_folder,testsize):
          if k == ord('q'):
              break
    
-   print "pos=",pos 
-   print "neg=",neg 
+   print ("pos=",pos) 
+   print ("neg=",neg) 
 
 if __name__ == '__main__':
     args = parse_args()
