@@ -1,0 +1,9 @@
+computer_vision/datas/
+computer_vision/projects/classification/caffe/expression_mobilnet/models/
+computer_vision/projects/classification/caffe/expression_mobilnet/models_crop_48/
+computer_vision/projects/classification/caffe/simpleconv3/snaps/
+computer_vision/projects/classification/caffe/simpleconv3_add_contrast/snaps/
+computer_vision/projects/classification/caffe/simpleconv3_add_contrast_colorshift/snaps/
+computer_vision/projects/classification/caffe/simpleconv3_fixcrop/snaps/
+computer_vision/projects/classification/caffe/simpleconv3_freecrop/snaps/
+computer_vision/projects/classification/caffe/simpleconv3_nodataaug/snaps/
