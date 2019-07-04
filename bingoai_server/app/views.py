@@ -1,6 +1,21 @@
-from app import app
 from app.forms import LoginForm
-from flask import render_template, flash, redirect, url_for
+from app.forms import PictureForm
+from flask import url_for, redirect, render_template, jsonify, request, flash, Response
+from flask import Flask
+from datetime import datetime
+from werkzeug.utils import secure_filename
+import os
+import time
+import logging
+# import cv2
+import uuid
+import codecs
+import sys
+
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'hard to guess'
+app.config['UP'] = os.path.join(os.path.dirname(__file__), "static/uploads")
+app.config['CACHE'] = os.path.join(os.path.dirname(__file__), "static/cache")
 
 
 @app.route('/')
@@ -34,3 +49,24 @@ def login():
             form.username.data, form.remember_me.data))
         return redirect(url_for('index'))
     return render_template('login.html',  title='Sign In', form=form)
+
+
+def change_filename(filename, timestamp, file_uuid):
+    info = os.path.splitext(filename)
+    new_file_name = timestamp.strftime("%Y%m%d%H%M%S")+"_"+file_uuid+info[-1]
+    return new_file_name
+
+
+@app.route('/picture', methods=['GET', 'POST'])
+def picture():
+    form = PictureForm()
+    print('logging:', request.remote_addr)
+    if form.validate_on_submit():
+        filename = secure_filename(form.picture.data.filename)
+        file_uuid = str(uuid.uuid4().hex)
+        time_now = datetime.now()
+        logo = change_filename(filename, time_now, file_uuid)
+        print(logo)
+        form.picture.data.save(app.config['UP'] + '/' + logo)
+        flash(u"文件传输成功", "ok")
+    return render_template('picture.html', form=form)
