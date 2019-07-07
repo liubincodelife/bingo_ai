@@ -1,5 +1,6 @@
 computer_vision/datas/
 computer_vision/projects/classification/caffe/expression_mobilnet/models/
+computer_vision/projects/classification/caffe/expression_mobilnet/models_finetune/
 computer_vision/projects/classification/caffe/expression_mobilnet/models_crop_48/
 computer_vision/projects/classification/caffe/simpleconv3/snaps/
 computer_vision/projects/classification/caffe/simpleconv3_add_contrast/snaps/
@@ -15,4 +16,6 @@ bingoai_server/app/__pycache__/
 bingoai_server/app/static/
 bingoai_server/app/modules/classification/roi_img/
 bingoai_server/app/modules/classification/test_img/
+bingoai_server/app/modules/__pycache__/
+bingoai_server/app/modules/classification/__pycache__/
 bingoai_server/venv/

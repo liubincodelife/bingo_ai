@@ -7,15 +7,15 @@ from werkzeug.utils import secure_filename
 import os
 import time
 import logging
-# import cv2
 import uuid
-import codecs
-import sys
+
+from app.modules.classification import classification
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'hard to guess'
 app.config['UP'] = os.path.join(os.path.dirname(__file__), "static/uploads")
 app.config['CACHE'] = os.path.join(os.path.dirname(__file__), "static/cache")
+app.config['CLASSIFICATION'] = os.path.join(os.path.dirname(__file__), "static/classification")
 
 
 @app.route('/')
@@ -70,3 +70,49 @@ def picture():
         form.picture.data.save(app.config['UP'] + '/' + logo)
         flash(u"文件传输成功", "ok")
     return render_template('picture.html', form=form)
+
+
+ALLOWED_EXTENSIONS = ['jpg', 'png', 'jpeg']
+
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+
+
+@app.route('/classification', methods=['GET', 'POST'])
+def get_emotion():
+    file_data = request.files['file']
+    if file_data and allowed_file(file_data.filename):
+        filename = secure_filename(file_data.filename)
+        file_uuid = str(uuid.uuid4().hex)
+        time_now = datetime.now()
+        filename = time_now.strftime("%Y%m%d%H%M%S") + "_" + file_uuid + "_" + filename
+        file_data.save(os.path.join(app.config['CLASSIFICATION'], filename))
+        src_path = os.path.join(app.config['CLASSIFICATION'], filename)
+        emotion = classification(src_path)
+        print("emotion_class = ", emotion)
+        if emotion == 1:
+            data = {
+                "code": 0,
+                "emotion": "嘟嘴"
+            }
+        elif emotion == 2:
+            data = {
+                "code": 0,
+                "emotion": "微笑"
+            }
+        elif emotion == 3:
+            data = {
+                "code": 0,
+                "emotion": "张嘴"
+            }
+        else:
+            data = {
+                "code": 0,
+                "emotion": "无表情"
+            }
+        print(jsonify(data))
+        return jsonify(data)
+
+    return jsonify({"code": 1, "msg": u"文件格式不允许"})

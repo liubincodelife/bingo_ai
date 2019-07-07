@@ -9,5 +9,5 @@ lr_policy: "fixed"
 display: 100
 max_iter: 10000
 snapshot: 1000
-snapshot_prefix: "models/mobilenet_finetune"
+snapshot_prefix: "models/mobilenet_base"
 solver_mode: GPU

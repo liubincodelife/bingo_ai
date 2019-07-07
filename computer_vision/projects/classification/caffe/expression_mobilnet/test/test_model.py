@@ -1,6 +1,5 @@
 #_*_ coding:utf8
 import sys
-#sys.path.insert(0, '/home/longpeng/opts/caffe/python/')
 import caffe
 import os,shutil
 import numpy as np
@@ -12,9 +11,9 @@ import cv2
 import os
 pallete = [0,0,0,
         255, 255, 255]
-
 debug=False
 import argparse
+
 def parse_args():
    parser = argparse.ArgumentParser(description='test resnet model for portrait segmentation')
    parser.add_argument('--model', dest='model_proto', help='the model', default='train_val_res18_matting_prob.prototxt', type=str)
@@ -26,7 +25,8 @@ def parse_args():
    parser.add_argument('--dst', dest='out_path', help='the dst', type=str, default='./test_results/')
    parser.add_argument('--gt', dest='gt', help='the gt', type=int, default=0)
    parser.add_argument('--enable_choose', dest='enable_choose', help='enable choose', type=int, default=False)
-   parser.add_argument('--enable_crop', dest='enable_crop', help='use crop or resize when test model', type=int, default=0)
+   parser.add_argument('--enable_crop', dest='enable_crop', help='use crop or resize when test model', type=int, default=1)
+   parser.add_argument('--enable_roi', dest='enable_roi', help='generate mouth roi img when test model', type=int, default=1)
    args = parser.parse_args()
    return args
 
@@ -34,21 +34,38 @@ def start_test(model_proto,model_weight,img_folder,testsize,enable_crop):
    caffe.set_device(0)
    #caffe.set_mode_cpu()
    net = caffe.Net(model_proto, model_weight, caffe.TEST)
-   img_list = os.listdir(img_folder)
+   folderType = img_folder.split('.')[-1]
+   print(folderType)
+   mode = 0
+   img_list = None
+   if folderType == 'txt':
+       mode = 0  #输入文本
+       img_list = open(img_folder,'r').readlines()
+   else:
+       mode = 1  #输入图像路径
+       img_list = os.listdir(img_folder)
    
    count = 0
    acc = 0
+   label = None
+   fileOut = open("./failed.txt", 'w')
    for imgname in img_list:
       print(imgname)
+      if mode == 0:
+          imgname,label = imgname.strip().split(' ')
       imgtype = imgname.split('.')[-1]
       if imgtype != 'png' and imgtype != 'jpg' and imgtype != 'JPG' and imgtype != 'jpeg' and imgtype != 'tif' and imgtype != 'bmp':
           print (imgtype,"error")
           continue
-      imgpath = imgname
+      imgPath = None
+      if mode == 0:
+          imgPath = "../" + imgname
+      else:
+          imgPath = "./roi_img/" + imgname + ".jpg"
 
-      img = cv2.imread(imgpath)
+      img = cv2.imread(imgPath)
       if img is None:
-          print ("---------img is empty---------",imgpath)
+          print ("---------img is empty---------",imgPath)
           continue
   
       imgheight,imgwidth,channel = img.shape
@@ -71,11 +88,21 @@ def start_test(model_proto,model_weight,img_folder,testsize,enable_crop):
       print ("result=",result)
       predict = np.argmax(result) 
       print("predict label=", predict)
-      if str(label) == str(predict):
-         acc = acc + 1
-      count = count + 1
-   
-   print ("acc=",float(acc) / float(count))
+      
+      if mode == 0:
+          if str(label) == str(predict):
+             acc = acc + 1
+          else:
+             failedStr = imgPath + "  real label = " + str(label) + "  predict label = " + str(predict) +"\n"
+             print(failedStr)
+             fileOut.write(failedStr)
+          count = count + 1
+   if mode == 0:
+       print ("acc=",float(acc) / float(count))
+       totalStr = "\n total = " + str(count) + " success = " + str(acc)  + " failed = " + str(count - acc) + "\n"
+       fileOut.write(totalStr)
+   fileOut.close()
+       
 if __name__ == '__main__':
     args = parse_args()
     start_test(args.model_proto,args.model_weight,args.imgtxt,args.testsize,int(args.enable_crop))

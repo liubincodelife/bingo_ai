@@ -1,11 +1,12 @@
 import cv2
 import numpy as np
-import caffe
 import dlib
 import sys
 import os
+import caffe
 
-PREDICTOR_PATH = "../../../models/shape_predictor_68_face_landmarks.dat"
+
+PREDICTOR_PATH = "./models/shape_predictor_68_face_landmarks.dat"
 predictor = dlib.shape_predictor(PREDICTOR_PATH)
 detector = dlib.get_frontal_face_detector()
 
@@ -105,6 +106,38 @@ def getRoi(img):
     return roi
 
 
+def classification(img_path, enable_crop):
+    print(img_path)
+    inputImg = cv2.imread(img_path)
+    roiImg = getRoi(inputImg)
+    roiImg = cv2.resize(roiImg, (128, 128))
+    testsize = 96
+    imgheight, imgwidth, channel = roiImg.shape
+
+    if enable_crop == 1:
+        print("use crop")
+        cropx = (imgwidth - testsize) // 2
+        cropy = (imgheight - testsize) // 2
+        roiImg = roiImg[cropy:cropy + testsize, cropx:cropx + testsize, 0:channel]
+    else:
+        roiImg = cv2.resize(roiImg, (testsize, testsize), interpolation=cv2.INTER_NEAREST)
+    # 初始化网络
+    # caffe.set_device(0)
+    caffe.set_mode_cpu()
+    model_proto = "./deploy/deploy.prototxt"
+    model_weight = "./deploy/mobilenet_finetune_iter_20000.caffemodel"
+    net = caffe.Net(model_proto, model_weight, caffe.TEST)
+    transformer = caffe.io.Transformer({'data': net.blobs['data'].data.shape})
+    transformer.set_mean('data', np.array([104.008, 116.669, 122.675]))
+    transformer.set_transpose('data', (2, 0, 1))
+
+    out = net.forward_all(data=np.asarray([transformer.preprocess('data', img)]))
+
+    result = out['classifier'][0]
+    print("result=", result)
+    return result
+
+
 if __name__ == '__main__':
     img_folder = sys.argv[1]
     img_list = os.listdir(img_folder)
@@ -118,7 +151,7 @@ if __name__ == '__main__':
         print(last)
         image_path = "./test_img/" + img_name
         print(image_path)
-        roi_name = "./roi_img/" + prefix + "_crop" + ".jpg"
+        roi_name = "./roi_img/" + prefix + "_roi" + ".jpg"
         print(roi_name)
         faceImg = cv2.imread(image_path, 1)
         roiImg = getRoi(faceImg)
