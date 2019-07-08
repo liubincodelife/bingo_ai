@@ -53,7 +53,8 @@ class EmotionNet:
         print("result=", result)
         emotion_type = np.argmax(result)
 
-        return emotion_type
+        return emotion_type, result[emotion_type][0][0]
+
 
 # This is using the Dlib Face Detector . Better result more time taking
 def get_landmarks(img):
@@ -152,9 +153,9 @@ emotionNet = EmotionNet(1, 96)
 
 def classification(img_path):
     print("img_path = ", img_path)
-    emotion = emotionNet.get_emotion_type(img_path, 1)
+    emotion, confidence = emotionNet.get_emotion_type(img_path, 1)
     print("emotion = ", emotion)
-    return emotion
+    return emotion, confidence
 
 
 if __name__ == '__main__':

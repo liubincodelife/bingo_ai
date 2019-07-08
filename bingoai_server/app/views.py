@@ -70,7 +70,7 @@ def picture():
         form.picture.data.save(app.config['UP'] + '/' + new_name)
         flash(u"文件传输成功", "ok")
         img_path = os.path.join(app.config['UP'], new_name)
-        emotion = classification(img_path)
+        emotion, confidence = classification(img_path)
         if emotion == 1:
             print("emotion : 嘟嘴")
         elif emotion == 2:
@@ -79,6 +79,7 @@ def picture():
             print("emotion : 张嘴")
         else:
             print("emotion : 无表情")
+        print("confidence: ", str(confidence)[0:5])
     return render_template('picture.html', form=form)
 
 
@@ -103,26 +104,31 @@ def get_emotion():
         img_path = os.path.join(app.config['CLASSIFICATION'], new_name)
         file_data.save(img_path)
         print(img_path)
-        emotion = classification(img_path)
+        emotion, confidence = classification(img_path)
+        confidenceStr = str(confidence)[0:5]
         if emotion == 1:
             data = {
                 "code": 0,
-                "emotion": "嘟嘴"
+                "emotion": "嘟嘴",
+                "confidence": confidenceStr
             }
         elif emotion == 2:
             data = {
                 "code": 0,
-                "emotion": "微笑"
+                "emotion": "微笑",
+                "confidence": confidenceStr
             }
         elif emotion == 3:
             data = {
                 "code": 0,
-                "emotion": "张嘴"
+                "emotion": "张嘴",
+                "confidence": confidenceStr
             }
         else:
             data = {
                 "code": 0,
-                "emotion": "无表情"
+                "emotion": "无表情",
+                "confidence": confidenceStr
             }
         print("emotion type = ", emotion, "\n")
         print("return data = ", jsonify(data))
