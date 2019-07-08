@@ -4,6 +4,7 @@ import dlib
 import sys
 import os
 import caffe
+import time
 
 
 PREDICTOR_PATH = "./models/shape_predictor_68_face_landmarks.dat"
@@ -13,6 +14,46 @@ detector = dlib.get_frontal_face_detector()
 cascade_path = '/usr/share/opencv/haarcascades/haarcascade_frontalface_default.xml'
 cascade = cv2.CascadeClassifier(cascade_path)
 
+
+class EmotionNet:
+    def __init__(self, mode, test_size):
+        if mode == 0:
+            caffe.set_mode_gpu()
+            caffe.set_device(0)
+        else:
+            caffe.set_mode_cpu()
+        self.model_proto = "./app/modules/classification/deploy/deploy.prototxt"
+        self.model_weight = "./app/modules/classification/deploy/mobilenet_finetune_iter_20000.caffemodel"
+        self.emotion_net = caffe.Net(self.model_proto, self.model_weight, caffe.TEST)
+        self.img_size = int(test_size)
+
+    def get_emotion_type(self, img_path, enable_crop):
+        start_time = time.time()
+        input_img = cv2.imread(img_path)
+        roi_img = getRoi(input_img)
+        mouth_img = cv2.resize(roi_img, (128, 128))
+        img_height, img_width, channel = mouth_img.shape
+
+        if enable_crop == 1:
+            print("use crop")
+            cropx = (img_width - self.img_size) // 2
+            cropy = (img_height - self.img_size) // 2
+            mouth_img = mouth_img[cropy:cropy + self.img_size, cropx:cropx + self.img_size, 0:channel]
+        else:
+            mouth_img = cv2.resize(mouth_img, (self.img_size, self.img_size), interpolation=cv2.INTER_NEAREST)
+
+        transformer = caffe.io.Transformer({'data': self.emotion_net.blobs['data'].data.shape})
+        transformer.set_mean('data', np.array([104.008, 116.669, 122.675]))
+        transformer.set_transpose('data', (2, 0, 1))
+
+        out = self.emotion_net.forward_all(data=np.asarray([transformer.preprocess('data', mouth_img)]))
+        end_time = time.time()
+        print("used time: ", (end_time - start_time) * 1000, "ms")
+        result = out['classifier'][0]
+        print("result=", result)
+        emotion_type = np.argmax(result)
+
+        return emotion_type
 
 # This is using the Dlib Face Detector . Better result more time taking
 def get_landmarks(img):
@@ -75,7 +116,7 @@ def getRoi(img):
     roiheight = ymax - ymin
 
     roi = img[ymin:ymax, xmin:xmax, 0:3]
-    cv2.imshow('roi src', roi)
+    # cv2.imshow('roi src', roi)
     if roiwidth > roiheight:
         dstlen = 1.5 * roiwidth
     else:
@@ -106,36 +147,14 @@ def getRoi(img):
     return roi
 
 
-def classification(img_path, enable_crop):
-    print(img_path)
-    inputImg = cv2.imread(img_path)
-    roiImg = getRoi(inputImg)
-    roiImg = cv2.resize(roiImg, (128, 128))
-    testsize = 96
-    imgheight, imgwidth, channel = roiImg.shape
+emotionNet = EmotionNet(1, 96)
 
-    if enable_crop == 1:
-        print("use crop")
-        cropx = (imgwidth - testsize) // 2
-        cropy = (imgheight - testsize) // 2
-        roiImg = roiImg[cropy:cropy + testsize, cropx:cropx + testsize, 0:channel]
-    else:
-        roiImg = cv2.resize(roiImg, (testsize, testsize), interpolation=cv2.INTER_NEAREST)
-    # 初始化网络
-    # caffe.set_device(0)
-    caffe.set_mode_cpu()
-    model_proto = "./deploy/deploy.prototxt"
-    model_weight = "./deploy/mobilenet_finetune_iter_20000.caffemodel"
-    net = caffe.Net(model_proto, model_weight, caffe.TEST)
-    transformer = caffe.io.Transformer({'data': net.blobs['data'].data.shape})
-    transformer.set_mean('data', np.array([104.008, 116.669, 122.675]))
-    transformer.set_transpose('data', (2, 0, 1))
 
-    out = net.forward_all(data=np.asarray([transformer.preprocess('data', img)]))
-
-    result = out['classifier'][0]
-    print("result=", result)
-    return result
+def classification(img_path):
+    print("img_path = ", img_path)
+    emotion = emotionNet.get_emotion_type(img_path, 1)
+    print("emotion = ", emotion)
+    return emotion
 
 
 if __name__ == '__main__':

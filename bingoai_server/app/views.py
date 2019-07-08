@@ -1,7 +1,5 @@
-from app.forms import LoginForm
-from app.forms import PictureForm
-from flask import url_for, redirect, render_template, jsonify, request, flash, Response
-from flask import Flask
+from app.forms import LoginForm, PictureForm
+from flask import Flask, url_for, redirect, render_template, jsonify, request, flash, Response
 from datetime import datetime
 from werkzeug.utils import secure_filename
 import os
@@ -9,7 +7,7 @@ import time
 import logging
 import uuid
 
-from app.modules.classification import classification
+from app.modules.classification.classification import *
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'hard to guess'
@@ -67,10 +65,20 @@ def picture():
         file_uuid = str(uuid.uuid4().hex)
         time_now = datetime.now()
         print("file name: ", filename)
-        logo = change_filename(filename, time_now, file_uuid)
-        print(logo)
-        form.picture.data.save(app.config['UP'] + '/' + logo)
+        new_name = change_filename(filename, time_now, file_uuid)
+        print(new_name)
+        form.picture.data.save(app.config['UP'] + '/' + new_name)
         flash(u"文件传输成功", "ok")
+        img_path = os.path.join(app.config['UP'], new_name)
+        emotion = classification(img_path)
+        if emotion == 1:
+            print("emotion : 嘟嘴")
+        elif emotion == 2:
+            print("emotion : 微笑")
+        elif emotion == 3:
+            print("emotion : 张嘴")
+        else:
+            print("emotion : 无表情")
     return render_template('picture.html', form=form)
 
 
@@ -89,12 +97,13 @@ def get_emotion():
         filename = secure_filename(file_data.filename)
         file_uuid = str(uuid.uuid4().hex)
         time_now = datetime.now()
-        filename = time_now.strftime("%Y%m%d%H%M%S") + "_" + file_uuid + "_" + filename
-        file_data.save(os.path.join(app.config['CLASSIFICATION'], filename))
-        src_path = os.path.join(app.config['CLASSIFICATION'], filename)
-        print(src_path)
-        emotion = classification(src_path)
-        print("emotion_class = ", emotion)
+        print("file name: ", filename)
+        # filename = time_now.strftime("%Y%m%d%H%M%S") + "_" + file_uuid + "_" + filename
+        new_name = change_filename(filename, time_now, file_uuid)
+        img_path = os.path.join(app.config['CLASSIFICATION'], new_name)
+        file_data.save(img_path)
+        print(img_path)
+        emotion = classification(img_path)
         if emotion == 1:
             data = {
                 "code": 0,
@@ -115,7 +124,9 @@ def get_emotion():
                 "code": 0,
                 "emotion": "无表情"
             }
-        print(jsonify(data))
+        print("emotion type = ", emotion, "\n")
+        print("return data = ", jsonify(data))
+
         return jsonify(data)
 
     return jsonify({"code": 1, "msg": u"文件格式不允许"})
