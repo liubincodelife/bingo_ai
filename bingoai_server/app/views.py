@@ -53,6 +53,7 @@ def login():
 
 def change_filename(filename, timestamp, file_uuid):
     info = os.path.splitext(filename)
+    # print("picture info: ", info)
     new_file_name = timestamp.strftime("%Y%m%d%H%M%S")+"_"+file_uuid+info[-1]
     return new_file_name
 
@@ -65,6 +66,7 @@ def picture():
         filename = secure_filename(form.picture.data.filename)
         file_uuid = str(uuid.uuid4().hex)
         time_now = datetime.now()
+        print("file name: ", filename)
         logo = change_filename(filename, time_now, file_uuid)
         print(logo)
         form.picture.data.save(app.config['UP'] + '/' + logo)
@@ -90,6 +92,7 @@ def get_emotion():
         filename = time_now.strftime("%Y%m%d%H%M%S") + "_" + file_uuid + "_" + filename
         file_data.save(os.path.join(app.config['CLASSIFICATION'], filename))
         src_path = os.path.join(app.config['CLASSIFICATION'], filename)
+        print(src_path)
         emotion = classification(src_path)
         print("emotion_class = ", emotion)
         if emotion == 1:
