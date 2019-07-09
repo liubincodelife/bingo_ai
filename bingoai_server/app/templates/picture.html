@@ -147,7 +147,7 @@
             <!--<input id="submit" name="submit" style="text-align: center; font-size:30px; margin-top:10px; margin-left:5px" type="submit" value="提交">-->
 
             {% for msg in get_flashed_messages(category_filter=['ok']) %}
-        	<p style="color: blue">{{ msg }}</p>
+        	<p style="color: white">{{ msg }}</p>
         	{% endfor %}
 
         	{{ form.picture }}
