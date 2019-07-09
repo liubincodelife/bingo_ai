@@ -81,6 +81,9 @@ def picture():
         elif emotion == 3:
             emotionStr = "张嘴"
             print("emotion : 张嘴")
+        elif emotion == 4:
+            emotionStr = "侧脸"
+            print("emotion : 侧脸")
         else:
             emotionStr = "无表情"
             print("emotion : 无表情")
@@ -113,7 +116,10 @@ def get_emotion():
         file_data.save(img_path)
         print(img_path)
         emotion, confidence, mark_img_name = classification(img_path)
-        confidenceStr = str(confidence)[0:5]
+        if confidence is not None:
+            confidenceStr = str(confidence)[0:5]
+        else:
+            confidenceStr = 1
         if emotion == 1:
             data = {
                 "code": 0,
@@ -132,6 +138,13 @@ def get_emotion():
             data = {
                 "code": 0,
                 "emotion": "张嘴",
+                "confidence": confidenceStr,
+                "filename": mark_img_name
+            }
+        elif emotion == 4:
+            data = {
+                "code": 1,
+                "emotion": "侧脸",
                 "confidence": confidenceStr,
                 "filename": mark_img_name
             }

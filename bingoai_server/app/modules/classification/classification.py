@@ -162,8 +162,18 @@ emotionNet = EmotionNet(1, 96)
 
 def classification(img_path):
     print("img_path = ", img_path)
-    emotion, confidence, mark_img_name = emotionNet.get_emotion_type(img_path, 1)
-    print("emotion = ", emotion)
+    emotion = None
+    confidence = None
+    mark_img_name = None
+    # 先判断是否是正脸照片
+    img = cv2.imread(img_path)
+    mark_rects = detector(img, 1)
+    if len(mark_rects) == 0:
+        emotion = 4
+        print("不是正脸照片")
+    else:
+        emotion, confidence, mark_img_name = emotionNet.get_emotion_type(img_path, 1)
+        print("emotion = ", emotion)
     return emotion, confidence, mark_img_name
 
 
