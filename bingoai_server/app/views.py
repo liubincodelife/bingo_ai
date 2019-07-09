@@ -153,4 +153,4 @@ def get_emotion():
 @app.route('/download/<path:filename>', methods=['GET'])
 def download_file(filename):
     print("download filename: ", filename)
-    return send_from_directory(app.config['DOWN'], filename, as_stachment=True)
+    return send_from_directory(app.config['DOWN'], filename, as_attachment=True)
