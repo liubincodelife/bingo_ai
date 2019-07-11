@@ -1,0 +1,41 @@
+/* pages/showEmotionResult/showEmotionResult.wxss */
+.page{
+   width: 100%;
+   height: 100%;
+   text-align: center;
+}
+
+.background{
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  background: gray;
+  position: absolute;
+  z-index: -1;
+}
+
+.featureImg{
+    margin: 20rpx;
+    width: 640rpx;
+}
+
+.itemView{
+    margin-top: 10px;
+    margin-left: 20px;
+    height: 40px;
+    justify-content: flex-start;
+    display: flex;
+    align-items: center;
+}
+
+.inputEmotion{
+    width: 250px;
+    height: 40px; 
+    margin: 10px;
+}
+
+.inputConfidence{
+    width: 250px;
+    height: 40px; 
+}

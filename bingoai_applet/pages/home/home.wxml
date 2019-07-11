@@ -1,0 +1,25 @@
+<!--pages/home/home.wxml-->
+<view class='page'>
+  <view class='option_block'>
+    <view class='buttons_container'>
+      <button class='list-style' bindtap='classificationBtnClick'>
+        <image class='s1' src='../../images/classification.jpg'></image>
+        <text>表情识别</text>
+      </button>
+
+      <button class='list-style' bindtap='segmentationBtnClick'>
+        <image class='s1' src='../../images/segmentation.jpg'></image>
+        <text>背景分割</text>
+      </button>
+    </view>
+
+    <view class='buttons_container'>
+      <button class='list-style' bindtap='detectionBtnClick'>
+        <image class='s1' src='../../images/detection.jpg'></image>
+        <text>目标检测</text>
+      </button>
+    </view>
+
+  </view>
+
+</view>

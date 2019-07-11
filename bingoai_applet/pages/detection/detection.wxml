@@ -1,0 +1,16 @@
+<!--pages/detection/detection.wxml-->
+<view class='page'>
+  <view style='text-align:center;margin:20rpx;font-weight:600; font-family: "Microsoft Yahei";'>{{title}}</view>
+  <view class="container">
+    <image class="bgPic" wx:if="{{bgPic}}" src="{{bgPic}}" mode='widthFix'></image>
+    <view class="emptyBg" wx:else></view>
+  </view>
+  <view class="btnContainer">
+    <button data-way="camera" bind:tap="chooseImage">使用相机</button>
+    <button data-way="album" bind:tap="chooseImage">相册选择</button>
+    <view class='buttons_container'>
+      <button bindtap='backBtnClick'>返回</button>
+      <button bindtap='nextPageBtnClick'>下一步</button>
+    </view>
+  </view>
+</view>

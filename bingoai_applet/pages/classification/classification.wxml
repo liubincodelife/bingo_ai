@@ -1,0 +1,14 @@
+<!--pages/classification/classification.wxml-->
+<view class='page'>
+  <view style='text-align:center;margin:20rpx;font-weight:600; font-family: "Microsoft Yahei";'>{{title}}</view>
+    <view class="imgs_container">
+        <image class="bgPic" wx:if="{{bgPic}}" src="{{bgPic}}" mode='widthFix'></image>
+        <image class="emptyPic" wx:else  src = "{{emptyPic}}" mode='widthFix'></image>
+    </view>
+    
+    <view class='buttons_container'>
+        <button type="primary" bindtap='actionSheetTap'>选择照片</button>
+        <button type="primary" bindtap='uploadTap'>上传照片</button>
+    </view>
+
+</view>

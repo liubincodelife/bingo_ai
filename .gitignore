@@ -19,3 +19,7 @@ bingoai_server/app/modules/classification/test_img/
 bingoai_server/app/modules/__pycache__/
 bingoai_server/app/modules/classification/__pycache__/
 bingoai_server/venv/
+
+#applet folders
+bingoai_applet/images/
+

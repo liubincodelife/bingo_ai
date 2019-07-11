@@ -1,0 +1,13 @@
+<!--pages/showEmotionResult/showEmotionResult.wxml-->
+<view class='page'>
+    <image class="featureImg"  style="margin:40rpx" src="{{featureImg}}" mode='widthFix'></image>
+    <view class="titleName" style='text-align:left;margin:20rpx;font-weight:600; font-family: "Microsoft Yahei";'>{{title}}</view>
+    <view class="itemView" style='text-align:left;margin:40rpx;font-weight:600; font-family: "Microsoft Yahei";'>表情：
+      <input class="inputEmotion" type="text" value="{{emotionClass}}" disabled='true'/>
+    </view>
+    <view class="itemView" style='text-align:left;margin:40rpx;font-weight:600; font-family: "Microsoft Yahei";'>置信度：
+      <input class="inputConfidence" type="text" value="{{confidence}}"disabled='true'/>
+    </view>
+</view>
+
+
