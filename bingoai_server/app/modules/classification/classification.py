@@ -30,12 +30,12 @@ class EmotionNet:
     def get_emotion_type(self, img_path, enable_crop):
         start_time = time.time()
         input_img = cv2.imread(img_path)
-        roi_img = getRoi(input_img)
+        roi_img, mark_img_name = getRoi(input_img, img_path)
         mouth_img = cv2.resize(roi_img, (128, 128))
         img_height, img_width, channel = mouth_img.shape
 
         if enable_crop == 1:
-            print("use crop")
+            # print("use crop")
             cropx = (img_width - self.img_size) // 2
             cropy = (img_height - self.img_size) // 2
             mouth_img = mouth_img[cropy:cropy + self.img_size, cropx:cropx + self.img_size, 0:channel]
@@ -53,7 +53,7 @@ class EmotionNet:
         print("result=", result)
         emotion_type = np.argmax(result)
 
-        return emotion_type, result[emotion_type][0][0]
+        return emotion_type, result[emotion_type][0][0], mark_img_name
 
 
 # This is using the Dlib Face Detector . Better result more time taking
@@ -78,18 +78,27 @@ def annotate_landmarks(img, landmarks):
     im = img.copy()
     for idx, point in enumerate(landmarks):
         pos = (point[0, 0], point[0, 1])
-        cv2.putText(im, str(idx), pos,
-                    fontFace=cv2.FONT_HERSHEY_SCRIPT_SIMPLEX,
-                    fontScale=0.4,
-                    color=(0, 0, 255))
-        cv2.circle(im, pos, 5, color=(0, 255, 255))
+        # cv2.putText(im, str(idx), pos,
+        #            fontFace=cv2.FONT_HERSHEY_SCRIPT_SIMPLEX,
+        #            fontScale=0.4,
+        #            color=(0, 0, 255))
+        cv2.circle(im, pos, 2, (255, 0, 0), -1, cv2.LINE_AA)
     return im
 
 
-def getRoi(img):
-    print("image shape=", img.shape)
+def getRoi(img, img_path):
+    # print("image shape=", img.shape)
     landmarks = get_landmarks(img)
-    print("landmarks", landmarks.shape)
+    # print("landmarks", landmarks.shape)
+    file_name = img_path.rsplit('/', 1)[1]
+    # print("feature name: ", file_name)
+    new_name = file_name.split('.', 1)[0]
+    new_name = new_name + "_mark.jpg"
+    # print("new_name: ", new_name)
+    featureImg = annotate_landmarks(img, landmarks)
+    save_path = os.path.join("./app/static/downloads", new_name)
+    # print("save_path: ", save_path)
+    cv2.imwrite(save_path, featureImg)
 
     xmin = 10000
     xmax = 0
@@ -108,10 +117,10 @@ def getRoi(img):
         if y > ymax:
             ymax = y
 
-    print("xmin=", xmin)
-    print("xmax=", xmax)
-    print("ymin=", ymin)
-    print("ymax=", ymax)
+    # print("xmin=", xmin)
+    # print("xmax=", xmax)
+    # print("ymin=", ymin)
+    # print("ymax=", ymax)
 
     roiwidth = xmax - xmin
     roiheight = ymax - ymin
@@ -145,7 +154,7 @@ def getRoi(img):
         newy = imagecols - dstlen
 
     roi = img[int(newy):int(newy + dstlen), int(newx):int(newx + dstlen), 0:3]
-    return roi
+    return roi, new_name
 
 
 emotionNet = EmotionNet(1, 96)
@@ -153,9 +162,19 @@ emotionNet = EmotionNet(1, 96)
 
 def classification(img_path):
     print("img_path = ", img_path)
-    emotion, confidence = emotionNet.get_emotion_type(img_path, 1)
-    print("emotion = ", emotion)
-    return emotion, confidence
+    emotion = None
+    confidence = None
+    mark_img_name = None
+    # 先判断是否是正脸照片
+    img = cv2.imread(img_path)
+    mark_rects = detector(img, 1)
+    if len(mark_rects) == 0:
+        emotion = 4
+        print("不是正脸照片")
+    else:
+        emotion, confidence, mark_img_name = emotionNet.get_emotion_type(img_path, 1)
+        print("emotion = ", emotion)
+    return emotion, confidence, mark_img_name
 
 
 if __name__ == '__main__':
