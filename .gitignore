@@ -24,8 +24,8 @@ computer_vision/projects/segmentation/caffe/resnet18/models_src/
 
 computer_vision/projects/classification/tensorflow/simpleconv3/checkpoints/
 computer_vision/projects/classification/tensorflow/simpleconv3/logs/
-computer_vision/projects/segmentation/tensorflow/fast-deep-matting-portrait-matting/ckpts/
-computer_vision/projects/segmentation/tensorflow/fast-deep-matting-portrait-matting/logs/
+computer_vision/projects/segmentation/tensorflow/fast_deep_matting_portrait_matting/ckpts/
+computer_vision/projects/segmentation/tensorflow/fast_deep_matting_portrait_matting/logs/
 
 #flask folders
 bingoai_server/.idea/
