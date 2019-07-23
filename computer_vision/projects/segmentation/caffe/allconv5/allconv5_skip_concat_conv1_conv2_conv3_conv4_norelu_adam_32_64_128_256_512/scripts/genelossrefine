@@ -1,0 +1,2 @@
+grep "Train net output #0: loss =" $1 > trainloss.refine
+grep "Test net output #0: loss =" $1 > testloss.refine

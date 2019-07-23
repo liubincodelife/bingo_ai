@@ -1,3 +1,7 @@
+*.jpg
+*.jpeg
+*.pyc
+.DS_Store
 computer_vision/datas/
 computer_vision/projects/classification/caffe/expression_mobilnet/models/
 computer_vision/projects/classification/caffe/expression_mobilnet/models_finetune/
@@ -8,6 +12,20 @@ computer_vision/projects/classification/caffe/simpleconv3_add_contrast_colorshif
 computer_vision/projects/classification/caffe/simpleconv3_fixcrop/snaps/
 computer_vision/projects/classification/caffe/simpleconv3_freecrop/snaps/
 computer_vision/projects/classification/caffe/simpleconv3_nodataaug/snaps/
+computer_vision/projects/classification/simpleconv3/__pycache__/
+computer_vision/projects/classification/simpleconv3/checkpoints/
+computer_vision/projects/classification/simpleconv3/logs/
+computer_vision/projects/segmentation/caffe/allconv5/allconv5_baseline_32_64_128_256_512/models/
+computer_vision/projects/segmentation/caffe/allconv5/allconv5_baseline_32_64_128_256_512/models_src/
+computer_vision/projects/segmentation/caffe/allconv5/allconv5_skip_concat_conv1_conv2_conv3_conv4_norelu_adam_32_64_128_256_512/models/
+computer_vision/projects/segmentation/caffe/allconv5/allconv5_skip_concat_conv1_conv2_conv3_conv4_norelu_adam_32_64_128_256_512/models_src/
+computer_vision/projects/segmentation/caffe/resnet18/models/
+computer_vision/projects/segmentation/caffe/resnet18/models_src/
+
+computer_vision/projects/classification/tensorflow/simpleconv3/checkpoints/
+computer_vision/projects/classification/tensorflow/simpleconv3/logs/
+computer_vision/projects/segmentation/tensorflow/fast-deep-matting-portrait-matting/ckpts/
+computer_vision/projects/segmentation/tensorflow/fast-deep-matting-portrait-matting/logs/
 
 #flask folders
 bingoai_server/.idea/
