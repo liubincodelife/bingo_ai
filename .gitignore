@@ -24,8 +24,14 @@ computer_vision/projects/segmentation/caffe/resnet18/models_src/
 
 computer_vision/projects/classification/tensorflow/simpleconv3/checkpoints/
 computer_vision/projects/classification/tensorflow/simpleconv3/logs/
-computer_vision/projects/segmentation/tensorflow/fast_deep_matting_portrait_matting/ckpts/
-computer_vision/projects/segmentation/tensorflow/fast_deep_matting_portrait_matting/logs/
+computer_vision/projects/segmentation/tensorflow/fast-portrait-matting/ckpts/
+computer_vision/projects/segmentation/tensorflow/fast-portrait-matting/logs/
+computer_vision/projects/segmentation/tensorflow/fast-portrait-matting/test/result/
+computer_vision/projects/segmentation/tensorflow/fast-portrait-matting/test/result_small/
+computer_vision/projects/segmentation/tensorflow/fast-portrait-matting/scripts/train-00001-of-00001
+computer_vision/projects/segmentation/tensorflow/fast-portrait-matting/scripts/val-00001-of-00001
+computer_vision/projects/segmentation/tensorflow/fast-portrait-matting/train/train-00001-of-00001
+computer_vision/projects/segmentation/tensorflow/fast-portrait-matting/train/val-00001-of-00001
 
 #flask folders
 bingoai_server/.idea/
