@@ -9,6 +9,7 @@ import logging
 import uuid
 
 from app.modules.classification.classification import *
+from app.modules.segmentation.segmentation import *
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'hard to guess'
@@ -16,6 +17,7 @@ app.config['UP'] = os.path.join(os.path.dirname(__file__), "static/uploads")
 app.config['DOWN'] = os.path.join(os.path.dirname(__file__), "static/downloads")
 app.config['CACHE'] = os.path.join(os.path.dirname(__file__), "static/cache")
 app.config['CLASSIFICATION'] = os.path.join(os.path.dirname(__file__), "static/classification")
+app.config['SEGMENTATION'] = os.path.join(os.path.dirname(__file__), "static/segmentation")
 
 
 @app.route('/')
@@ -158,6 +160,29 @@ def get_emotion():
         print("emotion type = ", emotion, "\n")
         print("return data = ", jsonify(data))
 
+        return jsonify(data)
+
+    return jsonify({"code": 1, "msg": u"文件格式不允许"})
+
+
+@app.route('/segmentation', methods=['GET', 'POST'])
+def get_seg_img():
+    file_data = request.files['file']
+    if file_data and allowed_file(file_data.filename):
+        filename = secure_filename(file_data.filename)
+        file_uuid = str(uuid.uuid4().hex)
+        time_now = datetime.now()
+        print("file name: ", filename)
+        # filename = time_now.strftime("%Y%m%d%H%M%S") + "_" + file_uuid + "_" + filename
+        new_name = change_filename(filename, time_now, file_uuid)
+        img_path = os.path.join(app.config['SEGMENTATION'], new_name)
+        file_data.save(img_path)
+        print(img_path)
+        seg_img_name = segmentation(img_path)
+        data = {
+            "code": 0,
+            "filename": seg_img_name
+        }
         return jsonify(data)
 
     return jsonify({"code": 1, "msg": u"文件格式不允许"})
